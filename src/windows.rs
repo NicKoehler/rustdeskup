@@ -9,7 +9,7 @@ pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
     Command::new("cmd")
         .arg("/C")
         .arg(&temp_path)
-        .arg("--update")
+        .arg("--reinstall")
         .spawn()
         .expect("Failed to install");
 }
