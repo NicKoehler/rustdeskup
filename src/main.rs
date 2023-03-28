@@ -1,5 +1,6 @@
 mod download;
 mod linux;
+mod macos;
 mod windows;
 
 use std::env;
@@ -15,6 +16,7 @@ fn main() {
     match os {
         "linux" => linux::update(BASE_URL, temp_dir),
         "windows" => windows::update(BASE_URL, temp_dir),
+        "macos" => macos::update(BASE_URL, temp_dir),
         _ => panic!("Unupported OS."),
     };
 
