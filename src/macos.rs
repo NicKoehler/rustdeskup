@@ -16,7 +16,7 @@ pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
     Command::new("sh")
         .arg("-c")
         .arg(format!(
-            "sudo hdiutil attach {} && sudo cp -R /Volumes/rustdesk-1.2.0/RustDesk.app /Applications && sudo hdiutil umount /Volumes/rustdesk-1.2.0",
+            "sudo hdiutil attach {};sudo cp -R /Volumes/rustdesk-1.2.0/RustDesk.app /Applications;sudo hdiutil unmount /Volumes/rustdesk-1.2.0",
             temp_path
         ))
         .output()
