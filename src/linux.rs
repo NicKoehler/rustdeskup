@@ -1,7 +1,6 @@
+use crate::consts::FILENAME;
 use crate::download::download_from_url;
 use std::{fs::remove_file, path::PathBuf, process::Command};
-
-const FILENAME: &str = "rustdesk";
 
 pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
     let distro = std::fs::read_to_string("/etc/os-release").unwrap_or_else(|_| String::new());

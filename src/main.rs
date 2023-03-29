@@ -1,3 +1,5 @@
+mod android;
+mod consts;
 mod download;
 mod linux;
 mod macos;
@@ -15,8 +17,9 @@ fn main() {
 
     match os {
         "linux" => linux::update(BASE_URL, temp_dir),
-        "windows" => windows::update(BASE_URL, temp_dir),
         "macos" => macos::update(BASE_URL, temp_dir),
+        "android" => android::update(BASE_URL, temp_dir),
+        "windows" => windows::update(BASE_URL, temp_dir),
         _ => panic!("Unupported OS."),
     };
 
