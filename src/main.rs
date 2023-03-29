@@ -1,5 +1,4 @@
 mod android;
-mod consts;
 mod download;
 mod linux;
 mod macos;

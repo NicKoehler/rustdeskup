@@ -1,4 +1,3 @@
-use crate::consts::FILENAME;
 use crate::download::download_from_url;
 use std::{env::consts::ARCH, fs::remove_file, path::PathBuf, process::Command};
 
@@ -9,7 +8,7 @@ pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
         _ => panic!("Unsupported processor"),
     };
 
-    let temp_path = temp_dir.join(FILENAME).display().to_string();
+    let temp_path = temp_dir.join("rustdesk").display().to_string();
 
     download_from_url(url, &temp_path);
     Command::new("sh")
