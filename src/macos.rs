@@ -1,13 +1,8 @@
 use crate::download::download_from_url;
-use std::{env::consts::ARCH, fs::remove_file, path::PathBuf, process::Command};
+use std::{fs::remove_file, path::PathBuf, process::Command};
 
 pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
-    let url = match ARCH {
-        "x86_64" => format!("{}rustdesk-1.2.0-x86_64-apple-darwin.dmg", base_url),
-        "aarch64" => format!("{}rustdesk-1.2.0-aarch64-apple-darwin.dmg", base_url),
-        _ => panic!("Unsupported processor"),
-    };
-
+    let url = format!("{}rustdesk-1.2.0-x86_64.dmg", base_url);
     let temp_path = temp_dir.join("rustdesk").display().to_string();
 
     download_from_url(url, &temp_path);
