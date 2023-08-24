@@ -1,10 +1,10 @@
 use crate::download::download_from_url;
 use std::{env::consts::ARCH, fs::remove_file, path::PathBuf, process::Command};
 
-pub fn update(base_url: &str, temp_dir: PathBuf) -> () {
+pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
     let url = match ARCH {
-        "arm" => format!("{}rustdesk-1.2.2-armv7-signed.apk", base_url),
-        "aarch64" => format!("{}rustdesk-1.2.2-aarch64-signed.apk", base_url),
+        "arm" => format!("{}rustdesk-{}-armv7-signed.apk", base_url, version),
+        "aarch64" => format!("{}rustdesk-{}-aarch64-signed.apk", base_url, version),
         _ => panic!("Unsupported processor"),
     };
 
