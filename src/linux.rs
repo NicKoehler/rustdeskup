@@ -23,5 +23,5 @@ fn linux_arch_download(url: String, temp_path: &str) {
         .arg("--noconfirm")
         .output()
         .expect("Failed to install");
-    remove_file(temp_path).unwrap();
+    remove_file(temp_path).expect("Failed to remove temp file");
 }

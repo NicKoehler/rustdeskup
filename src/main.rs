@@ -2,6 +2,7 @@ mod android;
 mod download;
 mod linux;
 mod macos;
+mod update;
 mod windows;
 
 use std::env;
@@ -12,6 +13,8 @@ const BASE_URL: &str = "https://github.com/rustdesk/rustdesk/releases/download/n
 fn main() {
     let os = std::env::consts::OS;
     let temp_dir = env::temp_dir();
+
+    update::update_rustdeskup();
 
     println!("Downloading the update");
 

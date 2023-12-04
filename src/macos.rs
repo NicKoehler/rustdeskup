@@ -14,5 +14,5 @@ pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
         ))
         .output()
         .expect("Failed to install");
-    remove_file(temp_path).unwrap();
+    remove_file(temp_path).expect("Failed to remove temp file");
 }
