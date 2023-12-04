@@ -9,7 +9,7 @@ pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
     Command::new("cmd")
         .arg("/C")
         .arg(&temp_path)
-        .arg("--install")
+        .arg("--silent-install")
         .spawn()
         .expect("Failed to install");
 }
