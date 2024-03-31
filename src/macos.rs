@@ -2,7 +2,11 @@ use crate::download::download_from_url;
 use std::{fs::remove_file, path::PathBuf, process::Command};
 
 pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
+    #[cfg(target_arch = "x86_64")]
     let url = format!("{}rustdesk-{}-x86_64.dmg", base_url, version);
+    #[cfg(target_arch = "aarch64")]
+    let url = format!("{}rustdesk-{}-aarch64.dmg", base_url, version);
+
     let temp_path = temp_dir.join("rustdesk").display().to_string();
 
     download_from_url(url, &temp_path);
