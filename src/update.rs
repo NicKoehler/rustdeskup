@@ -5,5 +5,9 @@ pub fn update_rustdeskup() {
     Command::new("cargo")
         .arg("install")
         .arg("--git")
-        .arg("https://github.com/nickoehler/rustdeskup");
+        .arg("https://github.com/nickoehler/rustdeskup")
+        .spawn()
+        .expect("failed to update")
+        .wait()
+        .expect("failed to update");
 }
