@@ -1,15 +1,17 @@
-use crate::download::download_from_url;
-use std::{path::PathBuf, process::Command};
+use crate::{download::download_from_url, github::Release};
+use std::error::Error;
+use std::process::Command;
 
-pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
-    let url: String = format!("{}rustdesk-{}-x86_64.exe", base_url, version);
-    let temp_path = temp_dir.join("rustdesk.exe").display().to_string();
-
-    download_from_url(url, &temp_path);
+pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
+    download_from_url(
+        release.get_release_with_regex(r"rustdesk-\d+.\d+.\d+-x86_64.exe")?,
+        &format!("{tempdir}.exe"),
+    );
     Command::new("cmd")
         .arg("/C")
-        .arg(&temp_path)
+        .arg(tempdir)
         .arg("--silent-install")
         .spawn()
         .expect("Failed to install");
+    Ok(())
 }

@@ -1,30 +1,31 @@
 mod android;
 mod download;
+mod github;
 mod linux;
 mod macos;
-mod update;
 mod windows;
+use std::env::consts::OS;
 
-use std::env;
-
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-const BASE_URL: &str = "https://github.com/rustdesk/rustdesk/releases/download/nightly/";
+use github::get_nighly_release;
+use tempdir::TempDir;
 
 fn main() {
-    let os = std::env::consts::OS;
-    let temp_dir = env::temp_dir();
+    let release = get_nighly_release().expect("Nightly release not found.");
+    let tempdir = &TempDir::new("rustdesk")
+        .unwrap()
+        .into_path()
+        .join("rustdesk")
+        .display()
+        .to_string();
 
-    update::update_rustdeskup();
-
-    println!("Downloading the update");
-
-    match os {
-        "linux" => linux::update(BASE_URL, VERSION, temp_dir),
-        "macos" => macos::update(BASE_URL, VERSION, temp_dir),
-        "android" => android::update(BASE_URL, VERSION, temp_dir),
-        "windows" => windows::update(BASE_URL, VERSION, temp_dir),
+    match OS {
+        "linux" => linux::update(release, tempdir),
+        "macos" => macos::update(release, tempdir),
+        "windows" => windows::update(release, tempdir),
+        "android" => android::update(release, tempdir),
         _ => panic!("Unupported OS."),
-    };
+    }
+    .expect("Failed to update rustdesk");
 
     println!("RustDesk has been updated successfully!");
 }

@@ -1,14 +1,12 @@
-use crate::download::download_from_url;
-use std::{fs::remove_file, path::PathBuf, process::Command};
+use crate::{download::download_from_url, github::Release};
+use std::error::Error;
+use std::{fs::remove_file, process::Command};
 
-pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
+pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
     let distro = std::fs::read_to_string("/etc/os-release").unwrap_or_else(|_| String::new());
-
     if distro.contains("arch") {
-        linux_arch_download(
-            format!("{}rustdesk-{}-0-x86_64.pkg.tar.zst", base_url, version),
-            &temp_dir.join("rustdesk").display().to_string(),
-        );
+        linux_arch_download(release.get_release_with_regex(r"^.+zst$")?, tempdir);
+        Ok(())
     } else {
         panic!("Unsupported distribution");
     }

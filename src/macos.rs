@@ -1,22 +1,44 @@
-use crate::download::download_from_url;
-use std::{fs::remove_file, path::PathBuf, process::Command};
+use crate::{download::download_from_url, github::Release};
+use regex::Regex;
+use std::error::Error;
+use std::{fs::remove_file, process::Command};
 
-pub fn update(base_url: &str, version: &str, temp_dir: PathBuf) -> () {
+pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
     #[cfg(target_arch = "x86_64")]
-    let url = format!("{}rustdesk-{}-x86_64.dmg", base_url, version);
+    let url = release.get_release_with_regex(r"^.+x86_64.dmg$")?;
     #[cfg(target_arch = "aarch64")]
-    let url = format!("{}rustdesk-{}-aarch64.dmg", base_url, version);
+    let url = release.get_release_with_regex(r"^.+aarch64.dmg$")?;
 
-    let temp_path = temp_dir.join("rustdesk").display().to_string();
+    let version = extract_version(&url)?;
 
-    download_from_url(url, &temp_path);
+    download_from_url(url, tempdir);
     Command::new("sh")
         .arg("-c")
-        .arg(format!(
-            "sudo hdiutil attach {};sudo cp -R /Volumes/rustdesk-{}/RustDesk.app /Applications;sudo hdiutil unmount /Volumes/rustdesk-{}",
-            temp_path, version, version
+        .arg(
+            format!(
+            "sudo hdiutil attach {tempdir};sudo cp -R /Volumes/rustdesk-{version}/RustDesk.app /Applications;sudo hdiutil unmount /Volumes/rustdesk-{version}",
         ))
         .output()
         .expect("Failed to install");
-    remove_file(temp_path).expect("Failed to remove temp file");
+    remove_file(tempdir).expect("Failed to remove temp file");
+    Ok(())
+}
+
+pub fn extract_version(url: &str) -> Result<String, Box<dyn Error>> {
+    let re = Regex::new(r"\-(\d+.\d+.\d+)\-").unwrap();
+    if let Some(captures) = re.captures(url) {
+        return Ok(captures.get(1).map(|v| v.as_str()).unwrap().to_string());
+    }
+    panic!("Cannot parse version")
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::macos::extract_version;
+
+    #[test]
+    fn version_test() {
+        let version = "https://github.com/rustdesk/rustdesk/releases/download/nightly/rustdesk-1.2.7-aarch64.dmg";
+        assert!(extract_version(version).unwrap() == "1.2.7")
+    }
 }

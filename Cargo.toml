@@ -1,13 +1,16 @@
 [package]
 name = "rustdeskup"
-version = "1.2.7"
+version = "1.2.8"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = { version = "0.11.14", features = ["blocking"] }
+serde = "1.0.203"
+regex = "1.10.5"
 tempdir = "0.3.7"
+serde_derive = "1.0.203"
+reqwest = { version = "0.11.14", features = ["blocking", "json"] }
 
 [profile.release]
 lto = true
