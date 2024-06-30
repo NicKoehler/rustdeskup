@@ -8,7 +8,9 @@ pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
         _ => panic!("Unsupported processor"),
     };
 
-    download_from_url(url, tempdir);
+    let tempdir = format!("{tempdir}.apk");
+
+    download_from_url(url, &tempdir);
     Command::new("sh")
         .arg("-c")
         .arg(format!("termux-open {}", tempdir))
