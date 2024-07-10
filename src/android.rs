@@ -1,7 +1,7 @@
 use crate::{download::download_from_url, github::Release};
 use std::{env::consts::ARCH, error::Error, fs::remove_file, process::Command};
 
-pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
+pub async fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
     let url = match ARCH {
         "arm" => release.get_release_with_regex("^.+armv7-signed.apk$")?,
         "aarch64" => release.get_release_with_regex("^.+aarch64-signed.apk$")?,
@@ -10,7 +10,7 @@ pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
 
     let tempdir = format!("{tempdir}.apk");
 
-    download_from_url(url, &tempdir);
+    download_from_url(url, &tempdir).await?;
     Command::new("sh")
         .arg("-c")
         .arg(format!("termux-open {}", tempdir))

@@ -1,17 +1,18 @@
 use regex::bytes::Regex;
-use reqwest::blocking::Client;
+use reqwest::Client;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::error::Error;
 
-pub fn get_nighly_release() -> Result<Release, Box<dyn Error>> {
+pub async fn get_nighly_release() -> Result<Release, Box<dyn Error>> {
     let resp = Client::new()
         .get("https://api.github.com/repos/rustdesk/rustdesk/releases")
         .header("Accept", "application/json")
         .header("User-Agent", "Rust")
-        .send()?;
+        .send()
+        .await?;
 
-    let releases: Vec<Release> = resp.json()?;
+    let releases: Vec<Release> = resp.json().await?;
 
     for release in releases {
         if release.name == "nightly" {
@@ -187,31 +188,32 @@ impl Release {
 #[cfg(test)]
 mod tests {
     use crate::github::get_nighly_release;
+    use tokio;
 
-    #[test]
-    fn linux_arch() {
-        let release = get_nighly_release().unwrap();
+    #[tokio::test]
+    async fn linux_arch() {
+        let release = get_nighly_release().await.unwrap();
         assert!(release.get_release_with_regex(r"^.+zst$").is_ok());
     }
 
-    #[test]
-    fn windows() {
-        let release = get_nighly_release().unwrap();
+    #[tokio::test]
+    async fn windows() {
+        let release = get_nighly_release().await.unwrap();
         assert!(release
             .get_release_with_regex(r"rustdesk-\d+.\d+.\d+-x86_64.exe")
             .is_ok());
     }
 
-    #[test]
-    fn macos() {
-        let release = get_nighly_release().unwrap();
+    #[tokio::test]
+    async fn macos() {
+        let release = get_nighly_release().await.unwrap();
         assert!(release.get_release_with_regex(r"^.+x86_64.dmg$").is_ok());
         assert!(release.get_release_with_regex(r"^.+aarch64.dmg$").is_ok())
     }
 
-    #[test]
-    fn android() {
-        let release = get_nighly_release().unwrap();
+    #[tokio::test]
+    async fn android() {
+        let release = get_nighly_release().await.unwrap();
         assert!(release
             .get_release_with_regex("^.+armv7-signed.apk$")
             .is_ok());

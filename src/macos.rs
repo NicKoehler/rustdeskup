@@ -3,7 +3,7 @@ use regex::Regex;
 use std::error::Error;
 use std::{fs::remove_file, process::Command};
 
-pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
+pub async fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
     #[cfg(target_arch = "x86_64")]
     let url = release.get_release_with_regex(r"^.+x86_64.dmg$")?;
     #[cfg(target_arch = "aarch64")]
@@ -11,7 +11,7 @@ pub fn update(release: Release, tempdir: &str) -> Result<(), Box<dyn Error>> {
 
     let version = extract_version(&url)?;
 
-    download_from_url(url, tempdir);
+    download_from_url(url, tempdir).await?;
     Command::new("sh")
         .arg("-c")
         .arg(
